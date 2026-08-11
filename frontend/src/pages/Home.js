@@ -172,7 +172,18 @@ function AllProjects({ cats }) {
               <p className="eyebrow">{catTitle(p.category)}</p>
               <h3>{p.title}</h3>
               <p>{p.description}</p>
-              {p.price_hint && <span className="price-chip">{p.price_hint}</span>}
+              <div className="gallery-actions">
+                {p.price_hint && <span className="price-chip">{p.price_hint}</span>}
+                <a
+                  className="enquire-btn"
+                  href={`${WHATSAPP}?text=${encodeURIComponent(`Hi AR ELECTRO Projects, I'm interested in the "${p.title}" (${catTitle(p.category)}) project. Please share details and pricing.`)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  data-testid={`gallery-enquire-${i}`}
+                >
+                  Enquire <ArrowUpRight size={14} />
+                </a>
+              </div>
             </div>
           </Reveal>
         ))}

@@ -69,6 +69,19 @@ class LoginInput(BaseModel):
     email: str
     password: str
 
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str = Field(min_length=8)
+
+@api_router.post("/auth/change-password")
+async def change_password(input: PasswordChange, request: Request):
+    user_pub = await get_current_user(request)
+    user = await db.users.find_one({"id": user_pub["id"]})
+    if not user or not verify_password(input.current_password, user["password_hash"]):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    await db.users.update_one({"id": user["id"]}, {"$set": {"password_hash": hash_password(input.new_password)}})
+    return {"status": "password updated"}
+
 @api_router.post("/auth/login")
 async def login(input: LoginInput, request: Request, response: Response):
     email = input.email.strip().lower()
@@ -360,9 +373,6 @@ async def seed_admin():
             "name": "AR Admin", "role": "admin", "created_at": datetime.now(timezone.utc).isoformat(),
         })
         logger.info("Admin account seeded")
-    elif not verify_password(admin_password, existing["password_hash"]):
-        await db.users.update_one({"email": admin_email}, {"$set": {"password_hash": hash_password(admin_password)}})
-        logger.info("Admin password updated from env")
 
 async def seed_content():
     if await db.categories.count_documents({}) == 0:

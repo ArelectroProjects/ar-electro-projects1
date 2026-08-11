@@ -233,11 +233,40 @@ function VideosTab() {
   );
 }
 
+function AccountTab() {
+  const [current, setCurrent] = useState('');
+  const [next, setNext] = useState('');
+  const [busy, setBusy] = useState(false);
+  const submit = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      await api.post('/auth/change-password', { current_password: current, new_password: next });
+      toast.success('Password updated — use it on your next login');
+      setCurrent(''); setNext('');
+    } catch (err) {
+      toast.error(formatApiError(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div data-testid="admin-account-tab">
+      <form className="admin-form clipped account-form" onSubmit={submit}>
+        <label>Current password<input type="password" required value={current} onChange={(e) => setCurrent(e.target.value)} data-testid="current-password-input" placeholder="Your current password" /></label>
+        <label>New password<input type="password" required minLength="8" value={next} onChange={(e) => setNext(e.target.value)} data-testid="new-password-input" placeholder="Minimum 8 characters" /></label>
+        <button className="btn btn-primary btn-sm" disabled={busy} data-testid="change-password-submit"><span>{busy ? 'Updating...' : 'Update password'}</span></button>
+      </form>
+    </div>
+  );
+}
+
 const TABS = [
   { key: 'inquiries', label: 'Enquiries', Comp: InquiriesTab },
   { key: 'projects', label: 'Projects', Comp: ProjectsTab },
   { key: 'categories', label: 'Category Photos', Comp: CategoriesTab },
   { key: 'videos', label: 'YouTube Videos', Comp: VideosTab },
+  { key: 'account', label: 'Account', Comp: AccountTab },
 ];
 
 export default function AdminDashboard() {

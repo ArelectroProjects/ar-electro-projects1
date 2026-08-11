@@ -46,7 +46,18 @@ export default function CategoryDetail() {
               <h3>{p.title}</h3>
               <p>{p.description}</p>
             </div>
-            {p.price_hint && <span className="price-chip" data-testid={`price-hint-${i}`}>{p.price_hint}</span>}
+            <div className="row-actions">
+              {p.price_hint && <span className="price-chip" data-testid={`price-hint-${i}`}>{p.price_hint}</span>}
+              <a
+                className="enquire-btn"
+                href={`${WHATSAPP}?text=${encodeURIComponent(`Hi AR ELECTRO Projects, I'm interested in the "${p.title}" (${cat.title}) project. Please share details and pricing.`)}`}
+                target="_blank"
+                rel="noreferrer"
+                data-testid={`row-enquire-${i}`}
+              >
+                Enquire <ArrowUpRight size={14} />
+              </a>
+            </div>
           </Reveal>
         ))}
         {projects.length === 0 && <p className="muted">Projects for this category are being catalogued — message us on WhatsApp for the full list.</p>}
