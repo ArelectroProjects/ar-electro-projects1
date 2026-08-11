@@ -1,39 +1,56 @@
-import { useState } from 'react';
-import { BrowserRouter, Routes, Route, Link, useParams } from 'react-router-dom';
-import { ArrowUpRight, ChevronRight, Menu, X, Play, Send, MapPin, Phone, Mail } from 'lucide-react';
-import axios from 'axios';
-import { Toaster, toast } from 'sonner';
+import { useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import Lenis from 'lenis';
+import { Toaster } from 'sonner';
 import '@/App.css';
+import Header from '@/components/site/Header';
+import Footer from '@/components/site/Footer';
+import Home from '@/pages/Home';
+import Categories from '@/pages/Categories';
+import CategoryDetail from '@/pages/CategoryDetail';
+import About from '@/pages/About';
+import Contact from '@/pages/Contact';
+import AdminLogin from '@/pages/admin/AdminLogin';
+import AdminDashboard from '@/pages/admin/AdminDashboard';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
-const WHATSAPP = 'https://wa.me/919998525347';
-const images = {
-  drone: 'https://images.unsplash.com/photo-1604419623656-8ffddaae66b7?crop=entropy&cs=srgb&fm=jpg&ixlib=rb-4.1.0&q=85',
-  circuit: 'https://images.unsplash.com/photo-1517055729445-fa7d27394b48?crop=entropy&cs=srgb&fm=jpg&ixlib=rb-4.1.0&q=85',
-  board: 'https://images.unsplash.com/photo-1562976540-78c559c80296?crop=entropy&cs=srgb&fm=jpg&ixlib=rb-4.1.0&q=85',
-  lab: 'https://images.unsplash.com/photo-1527356900876-cae61d8d8462?crop=entropy&cs=srgb&fm=jpg&ixlib=rb-4.1.0&q=85',
-  robotics: 'https://images.unsplash.com/photo-1579803080319-43097a84f424?crop=entropy&cs=srgb&fm=jpg&ixlib=rb-4.1.0&q=85',
-};
-const projects = [
-  { slug:'diploma-project', title:'Diploma Project', eyebrow:'01 / FOUNDATION', desc:'Build-ready concepts with documentation that makes your viva stronger.', image:images.circuit, tags:['Working model','Report','PPT'] },
-  { slug:'degree-project', title:'Degree Project', eyebrow:'02 / ADVANCED', desc:'Ambitious engineering builds shaped into practical final-year outcomes.', image:images.board, tags:['IEEE paper','Source code','Mentoring'] },
-  { slug:'drone-project', title:'Drone Project', eyebrow:'03 / AERIAL', desc:'Flight, vision and autonomous systems for the next generation of makers.', image:images.drone, tags:['Robotics','Flight test','IoT'] },
-  { slug:'electronics-project', title:'Electronics Project', eyebrow:'04 / CIRCUIT', desc:'From a first schematic to a reliable, working electronics prototype.', image:images.lab, tags:['PCB','Sensors','Embedded'] },
-  { slug:'electrical-project', title:'Electrical Project', eyebrow:'05 / POWER', desc:'Power systems and controls explained clearly, safely and completely.', image:images.board, tags:['Automation','Control','Safety'] },
-  { slug:'embedded-project', title:'Embedded Project', eyebrow:'06 / CODE + HARDWARE', desc:'Purposeful firmware meets real-world hardware and measurable results.', image:images.circuit, tags:['Microcontroller','Firmware','Testing'] },
-  { slug:'mechanical-project', title:'Mechanical Project', eyebrow:'07 / MOTION', desc:'Prototype mechanisms that move from sketchbook to workshop.', image:images.robotics, tags:['CAD','Fabrication','Prototype'] },
-  { slug:'biomedical-project', title:'Biomedical Project', eyebrow:'08 / HUMAN SYSTEMS', desc:'Thoughtful technology for monitoring, access and better outcomes.', image:images.lab, tags:['Sensors','Assistive','Research'] },
-  { slug:'iot-projects', title:'IoT Projects', eyebrow:'09 / CONNECTED', desc:'Connect sensors, devices and decisions into one intelligent system.', image:images.board, tags:['Cloud ready','Automation','Dashboard'] },
-];
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
 
-function Header(){ const [open,setOpen]=useState(false); return <header className="site-header"><div className="container header-inner"><Link to="/" className="brand" data-testid="brand-home-link"><span className="brand-mark">AR</span><span>Electro<br/><b>Projects</b></span></Link><button className="menu-btn" onClick={()=>setOpen(!open)} data-testid="mobile-menu-button" aria-label="Toggle menu">{open?<X/>:<Menu/>}</button><nav className={open?'nav open':'nav'}><Link to="/categories" data-testid="nav-categories-link">Projects</Link><Link to="/about" data-testid="nav-about-link">About</Link><Link to="/contact" data-testid="nav-contact-link">Contact</Link><a className="nav-whatsapp" href={WHATSAPP} target="_blank" rel="noreferrer" data-testid="nav-whatsapp-link">WhatsApp <ArrowUpRight size={15}/></a></nav></div></header> }
-function Footer(){ return <footer className="footer"><div className="container"><div className="footer-top"><div><p className="eyebrow">AR / 2024—NOW</p><h2>MAKE THE<br/><span>IDEA REAL.</span></h2></div><Link className="round-arrow" to="/contact" data-testid="footer-contact-link"><ArrowUpRight/></Link></div><div className="footer-bottom"><span>GSTIN: 24DRWPA8036A1ZX</span><span>AR ELECTRO PROJECTS ©</span><div className="footer-links"><a href="https://youtube.com/@arelectroprojects" target="_blank" rel="noreferrer" data-testid="footer-youtube-link">YouTube</a><a href="https://www.arelectroprojects.com/" target="_blank" rel="noreferrer" data-testid="footer-project-list-link">Project list</a></div></div></div></footer> }
-function Layout({children}){ return <><Header/><main>{children}</main><Footer/><Toaster theme="dark" position="bottom-right"/></> }
-function ProjectCard({project, index}){ return <Link to={`/projects/${project.slug}`} className="project-card" data-testid={`project-card-${project.slug}`}><div className="project-image"><img src={project.image} alt={`${project.title} project`} loading={index<3?'eager':'lazy'}/><span className="card-index">{String(index+1).padStart(2,'0')}</span><span className="card-arrow"><ArrowUpRight size={19}/></span></div><div className="card-copy"><p className="eyebrow">{project.eyebrow}</p><h3>{project.title}</h3><p>{project.desc}</p></div></Link> }
-function Home(){ return <Layout><section className="hero container"><div className="hero-copy"><p className="eyebrow accent">01 / AR ELECTRO PROJECTS</p><h1>ENGINEERING<br/><span>IDEAS,</span><br/>MADE REAL.</h1><p className="hero-intro">We&apos;re dedicated to transforming ideas into reality through innovative technology projects — and helping the next generation build with confidence.</p><div className="hero-actions"><Link className="btn btn-primary" to="/categories" data-testid="explore-projects-button">Explore Projects <ArrowUpRight size={18}/></Link><a className="text-link" href={WHATSAPP} target="_blank" rel="noreferrer" data-testid="hero-whatsapp-link">Contact on WhatsApp <ChevronRight size={17}/></a></div></div><div className="hero-feature"><div className="feature-image"><img src={images.drone} alt="Drone ready for a technology project"/><span className="feature-label">FEATURED / DRONE SYSTEMS</span></div><div className="feature-note"><span>500+</span><p>PROJECTS<br/>DELIVERED</p></div></div></section><section className="ticker"><div className="container ticker-inner"><span>PROJECTS FOR</span><b>DIPLOMA</b><i>×</i><b>DEGREE</b><i>×</i><b>INNOVATORS</b><span className="ticker-tail">SOURCE CODE / REPORT / VIVA SUPPORT</span></div></section><section className="section container"><div className="section-head"><div><p className="eyebrow accent">02 / THE INDEX</p><h2>CHOOSE YOUR<br/><span>BUILD.</span></h2></div><Link className="text-link" to="/categories" data-testid="view-all-categories-link">View all categories <ArrowUpRight size={17}/></Link></div><div className="project-grid home-grid">{projects.slice(0,5).map((p,i)=><ProjectCard key={p.slug} project={p} index={i}/>)}</div></section><section className="youtube-strip"><div className="container youtube-inner"><div className="youtube-icon"><Play fill="currentColor" size={24}/></div><div><p className="eyebrow">WATCH / LEARN / BUILD</p><h2>PROJECTS THAT TEACH.</h2></div><a className="btn btn-outline" href="https://youtube.com/@arelectroprojects" target="_blank" rel="noreferrer" data-testid="youtube-channel-button">Visit YouTube <ArrowUpRight size={18}/></a></div></section></Layout> }
-function Categories(){ return <Layout><section className="page-intro container"><p className="eyebrow accent">PROJECT INDEX / 09 CATEGORIES</p><h1>FIND YOUR<br/><span>NEXT BUILD.</span></h1><p>Choose a direction. We’ll help you take it from an idea to a confidently presented project.</p></section><section className="section container"><div className="project-grid">{projects.map((p,i)=><ProjectCard key={p.slug} project={p} index={i}/>)}</div></section></Layout> }
-function ProjectDetail(){ const {slug}=useParams(); const project=projects.find(p=>p.slug===slug)||projects[0]; return <Layout><section className="detail container"><p className="eyebrow accent">PROJECT / {project.eyebrow}</p><h1>{project.title.toUpperCase()}<br/><span>BUILT BETTER.</span></h1><div className="detail-meta"><span>AR ELECTRO / PROJECT CATALOG</span><span>READY FOR YOUR IDEA →</span></div><img className="detail-image" src={project.image} alt={`${project.title} featured project`}/><div className="detail-body"><div><p className="eyebrow accent">THE BRIEF</p><h2>MAKE IT WORK.<br/>MAKE IT <span>YOURS.</span></h2></div><div className="detail-text"><p>{project.desc} Our student-focused team supports the complete journey: selecting the right scope, building the working model, preparing documentation and getting you ready for the viva.</p><div className="tag-list">{project.tags.map(t=><span key={t}>{t}</span>)}</div><Link className="btn btn-primary" to="/contact" data-testid="project-detail-contact-button">Start a project <ArrowUpRight size={18}/></Link></div></div></section></Layout> }
-function About(){ return <Layout><section className="about-hero container"><p className="eyebrow accent">ABOUT / THE WORKSHOP</p><h1>KNOWLEDGE<br/>THAT <span>MOVES.</span></h1><div className="about-lead"><p>Welcome to AR ELECTRO Projects! 🚀</p><p>We&apos;re dedicated to transforming ideas into reality through innovative technology projects. Our mission is to spread knowledge and inspire the next generation of thinkers and creators.</p></div></section><section className="about-facts container"><div className="fact"><b>500+</b><span>PROJECTS DELIVERED</span></div><div className="fact"><b>09</b><span>ENGINEERING CATEGORIES</span></div><div className="fact"><b>01:01</b><span>STUDENT-FOCUSED SUPPORT</span></div></section><section className="youtube-strip"><div className="container youtube-inner"><div><p className="eyebrow">THE AR ELECTRO CHANNEL</p><h2>LEARN IT. BUILD IT.<br/>EXPLAIN IT.</h2></div><a className="btn btn-primary" href="https://youtube.com/@arelectroprojects" target="_blank" rel="noreferrer" data-testid="about-youtube-button">Watch tutorials <Play size={17}/></a></div></section></Layout> }
-function Contact(){ const [form,setForm]=useState({name:'',email:'',phone:'',requirement:''}); const [loading,setLoading]=useState(false); const submit=async(e)=>{e.preventDefault(); setLoading(true); try { await axios.post(`${API}/inquiries`,form); toast.success('Requirement received — we’ll be in touch.'); setForm({name:'',email:'',phone:'',requirement:''}); } catch(err){ toast.error('Could not send right now. Please use WhatsApp.'); } finally{setLoading(false)} }; return <Layout><section className="contact container"><div className="contact-copy"><p className="eyebrow accent">CONTACT / LET’S BUILD</p><h1>YOUR IDEA.<br/><span>OUR NEXT</span><br/>PROJECT.</h1><p>Tell us what you’re imagining. Share the rough version — we’ll help you find the right scope, components and path forward.</p><div className="contact-lines"><a href={WHATSAPP} target="_blank" rel="noreferrer" data-testid="contact-whatsapp-link"><Phone size={18}/> +91 9998525347</a><a href="mailto:arelectroprojects@gmail.com" data-testid="contact-email-link"><Mail size={18}/> arelectroprojects@gmail.com</a><span><MapPin size={18}/> India / Supporting builders everywhere</span></div></div><form className="contact-form" onSubmit={submit} data-testid="contact-form"><label>Name<input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})} data-testid="contact-name-input" placeholder="Your full name"/></label><label>Email<input required type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} data-testid="contact-email-input" placeholder="you@example.com"/></label><label>Phone<input required value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})} data-testid="contact-phone-input" placeholder="+91 ..."/></label><label>Project requirement<textarea required minLength="10" value={form.requirement} onChange={e=>setForm({...form,requirement:e.target.value})} data-testid="contact-requirement-input" placeholder="Tell us about your idea, course and timeline..."/></label><button className="btn btn-primary form-submit" disabled={loading} data-testid="contact-form-submit-button">{loading?'Sending...':'Send requirement'} <Send size={17}/></button></form></section></Layout> }
-function App(){ return <BrowserRouter><Routes><Route path="/" element={<Home/>}/><Route path="/categories" element={<Categories/>}/><Route path="/projects/:slug" element={<ProjectDetail/>}/><Route path="/about" element={<About/>}/><Route path="/contact" element={<Contact/>}/></Routes></BrowserRouter> }
-export default App;
+function SiteLayout({ children }) {
+  return (
+    <>
+      <Header />
+      <main>{children}</main>
+      <Footer />
+    </>
+  );
+}
+
+export default function App() {
+  useEffect(() => {
+    const lenis = new Lenis({ duration: 1.15, smoothWheel: true });
+    let frame;
+    const raf = (time) => { lenis.raf(time); frame = requestAnimationFrame(raf); };
+    frame = requestAnimationFrame(raf);
+    return () => { cancelAnimationFrame(frame); lenis.destroy(); };
+  }, []);
+
+  return (
+    <BrowserRouter>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<SiteLayout><Home /></SiteLayout>} />
+        <Route path="/categories" element={<SiteLayout><Categories /></SiteLayout>} />
+        <Route path="/projects/:slug" element={<SiteLayout><CategoryDetail /></SiteLayout>} />
+        <Route path="/about" element={<SiteLayout><About /></SiteLayout>} />
+        <Route path="/contact" element={<SiteLayout><Contact /></SiteLayout>} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+      </Routes>
+      <Toaster theme="dark" position="bottom-right" />
+    </BrowserRouter>
+  );
+}

@@ -1,49 +1,38 @@
 # PRD — AR ELECTRO Projects Website
 
 ## Original Problem Statement
-Website for "AR ELECTRO Projects" — a project-building company for students. Multi-page site with About Us (company profile), project categories with photos (Diploma, Degree, Drone, Electronics, Electrical, Embedded, Mechanical, Biomedical, IoT), and a contact form. Theme: black + #e51a4D. CTAs: "Explore Projects" and "Contact on WhatsApp". YouTube channel link (youtube.com/@arelectroprojects). GSTIN 24DRWPA8036A1ZX. Reference: arelectroprojects.com.
+Website for "AR ELECTRO Projects" — multi-page site with About Us, project categories with photos (Diploma, Degree, Drone, Electronics, Electrical, Embedded, Mechanical, Biomedical, IoT), contact form. Theme: black + #e51a4D. CTAs: "Explore Projects", "Contact on WhatsApp". YouTube: youtube.com/@arelectroprojects. GSTIN 24DRWPA8036A1ZX. Reference: arelectroprojects.com.
 
 ## User Personas
-- Diploma/Degree engineering students looking for ready/guided final-year projects
-- Innovators wanting drones, IoT, embedded builds
-- Company owner receiving inquiries via form + WhatsApp
+- Diploma/Degree engineering students seeking final-year projects
+- Makers wanting drones, IoT, embedded builds
+- Owner (admin) managing photos, project listings, videos and enquiries
 
 ## Architecture
-- Frontend: React + Tailwind + shadcn-style components, multi-page routing (Home, Categories, Category Detail, About, Contact)
-- Backend: FastAPI (`server.py`), all routes under /api
-- DB: MongoDB via MONGO_URL, collection `inquiries`
-- Config: frontend/.env (REACT_APP_BACKEND_URL), backend/.env (MONGO_URL, DB_NAME)
-- Design system: /app/design_guidelines.json
+- Frontend: React + Tailwind + framer-motion (scroll reveals, masked hero reveal, parallax) + lenis (smooth scroll)
+- Backend: FastAPI, routes under /api; JWT cookie auth for admin; Emergent object storage for uploads; Resend for enquiry email alerts
+- DB: MongoDB — users, categories, projects, videos, inquiries, files, login_attempts
+- Config: frontend/.env (REACT_APP_BACKEND_URL), backend/.env (MONGO_URL, DB_NAME, JWT_SECRET, ADMIN_EMAIL, ADMIN_PASSWORD, EMERGENT_LLM_KEY, ALERT_EMAIL, SENDER_EMAIL, APP_NAME)
 
-## Core Requirements (static)
-- Black + #e51a4D brand theme
-- Category grid with project photos
-- About Us company profile page
-- Contact form: name, email, phone, project requirement
-- WhatsApp CTA (wa.me/919998525347 — single constant in App.js)
-- YouTube channel links
-- GSTIN displayed on About/Footer
-
-## Implemented (as of 2026-08-11)
-- Multi-page React app: Home hero, categories grid, per-category detail pages, About, Contact
-- Contact form -> POST /api/inquiries -> MongoDB (GET /api/inquiries exists for retrieval)
-- Curated category imagery (placeholder stock, user-approved)
-- WhatsApp + YouTube + email CTAs wired site-wide
-- Mobile nav, responsive layout, data-testids on interactive elements
-- E2E testing passed 100% (/app/test_reports/iteration_1.json); re-verified POST /api/inquiries + page flows 2026-08-11
-
-## Backlog
-- P0: None
-- P1: Admin dashboard to upload real project photos & manage categories (Phase 2)
-- P1: Replace placeholder category images with real client project photos
-- P2: Split monolithic App.js into src/pages/ modules
-- P2: Inquiry notification (email/WhatsApp alert on new submission)
-- P2: SEO meta + sitemap
-
-## Next Tasks
-1. Collect real project photos from client; build upload/admin flow
-2. Add per-category project listings (titles, descriptions, price hints)
-3. Deployment readiness check when going live
+## Implemented
+### 2026-08-10 (initial)
+- Multi-page site, black/#e51a4D theme, category grid, About, Contact form -> MongoDB
+### 2026-08-11 (phase 2)
+- Award-level redesign: kinetic masked-line hero, parallax spotlight image, editorial marquee, numbered manifesto chapters, clipped frames, grain overlay, Syne/IBM Plex Mono/Manrope type
+- Admin dashboard (/admin): JWT login, photo upload per category (object storage), project CRUD with price hints, YouTube video management, enquiry inbox
+- Project listings: each category page shows individual builds with title, description, price hint (₹), seeded with 12 starter projects
+- YouTube showcase: 3 real channel videos embedded on home (GSM Gas Leak Detector, Automatic Power Factor Correction, DIY Electric Cycle), admin-editable
+- Enquiry alerts: email to arelectroprojects@gmail.com wired via Resend — ACTIVE only when RESEND_API_KEY is set (currently SKIPPED, key not provisioned); WhatsApp alerts NOT built (needs Twilio credentials)
 
 ## Credentials
-No auth in the app. See /app/memory/test_credentials.md (no credentials required).
+- Admin: arelectroprojects@gmail.com / ARElectro@2026 (see /app/memory/test_credentials.md)
+
+## Backlog
+- P0: Activate email alerts (provision RESEND_API_KEY); WhatsApp alerts via Twilio (needs user credentials)
+- P1: Client uploads real project photos via dashboard (replace placeholder stock)
+- P1: More project listings per category from arelectroprojects.com catalogue
+- P2: SEO meta + sitemap; deployment readiness
+
+## Next Tasks
+1. Get Resend key / Twilio credentials from user to finish alerts
+2. Client seeds real photos + full catalogue
