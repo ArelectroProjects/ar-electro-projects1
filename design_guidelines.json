@@ -1,0 +1,107 @@
+{
+  "project": {
+    "name": "AR ELECTRO Projects",
+    "context": "hybrid_fullstack_marketing_site",
+    "audience": ["Diploma and degree students", "Engineering learners", "Project mentors", "Parents and academic institutions"],
+    "success_actions": ["Explore project categories", "Open a project detail page", "Contact on WhatsApp", "Submit a project requirement", "Visit YouTube tutorials", "Visit external project list"],
+    "theme": "dark editorial with signal-red accents",
+    "brand_promise": "Turn ambitious engineering ideas into buildable, understandable projects."
+  },
+  "design_directions": [
+    {"name":"Red Signal Workshop","probability":0.34,"description":"Swiss poster composition fused with electronics bench photography and industrial label-making. Near-black structural canvas, large left-aligned typography, red functional highlights, hard rules and image crops.","best_for":"Primary implementation; confident, practical, memorable."},
+    {"name":"Project Field Manual","probability":0.24,"description":"Military field-guide indexing fused with engineering schematics and editorial magazine spreads. Category pages use numbered labels, grid coordinates and process notes.","best_for":"Category browsing and detail pages."},
+    {"name":"Blackboard Circuit Club","probability":0.18,"description":"Technical classroom blackboard texture fused with neo-brutalist cards and red marker annotations. More approachable for younger students while retaining credibility.","best_for":"Tutorial discovery and YouTube promotion."},
+    {"name":"Night Lab Archive","probability":0.14,"description":"Cinematic darkroom photography fused with museum archive cataloguing and mono metadata. Project photos feel like specimens, with restrained motion and generous black space.","best_for":"Premium project showcase."},
+    {"name":"Redline Engineering Atlas","probability":0.10,"description":"Transit-map logic fused with exploded-view diagrams and a compact service directory. Red routes connect project categories and contact actions.","best_for":"Experimental alternate direction; avoid overcomplicating the MVP."}
+  ],
+  "chosen_direction": "Red Signal Workshop",
+  "research_references": [
+    {"source":"Godly / portfolio roundups","url":"https://godly.design/","descriptor":"Bold hero typography, macro hover previews, scroll-triggered transitions, and case-study storytelling led by strongest work."},
+    {"source":"Land-book portfolio gallery","url":"https://land-book.com/design/portfolio","descriptor":"Focused homepage hierarchy, gallery or magazine-style project grids, visible About and contact access, and 3–6 featured projects."},
+    {"source":"Portfolio structure guidance","url":"https://muz.li/inspiration/portfolio-website/","descriptor":"Explain challenge, contribution, decisions and outcomes; use concise positioning copy rather than long undifferentiated text."}
+  ],
+  "typography": {
+    "heading_font": "Barlow Condensed",
+    "body_font": "IBM Plex Sans",
+    "mono_font": "IBM Plex Mono",
+    "implementation": "Use Google Fonts import or local fallback in index.css. Headings use Barlow Condensed 700/900, uppercase selectively, tracking-tight and leading-none. Body uses IBM Plex Sans 400/500 with leading-relaxed. Labels use IBM Plex Mono, uppercase, text-xs and tracking-[0.2em]. Never use Inter, Roboto or generic system fonts for headings.",
+    "scale": {"h1":"text-4xl sm:text-5xl lg:text-6xl","h2":"text-2xl sm:text-3xl lg:text-4xl","h3":"text-xl sm:text-2xl","body":"text-sm sm:text-base","label":"text-xs"}
+  },
+  "colors": {
+    "archetype":"Swiss high-contrast with performance-pro influence",
+    "background":"#111214",
+    "surface":"#191B1F",
+    "surface_elevated":"#22252A",
+    "foreground":"#F4F1EC",
+    "muted_foreground":"#B8B5B1",
+    "border":"#3A3738",
+    "primary":"#E51A4D",
+    "primary_hover":"#FF416D",
+    "primary_foreground":"#FFF7F8",
+    "warm_neutral":"#D8D0C7",
+    "usage":"Keep 80–90% monochrome; use #E51A4D only for CTA, active category, rules, metadata markers and key emphasis. No gradients. Never use pure #000000 or #808080. Verify normal text at 4.5:1 and large text at 3:1.",
+    "forbidden":"Do not use #7351B7, teal dashboard colors, full-screen gradients, or red text on dark red surfaces."
+  },
+  "layouts": {
+    "global":"Responsive shell with visible desktop nav: AR ELECTRO mark, Projects, Categories, About, Contact, and red WhatsApp CTA. Solid dark header with bottom border; sticky only if content receives pt spacing.",
+    "home":"Asymmetric 12-column Tetris grid. Hero spans md:col-span-8 with red index rail and project image; adjacent tall feature spans md:col-span-4. Below, category grid mixes 8/4, 4/4/4 and an intentionally empty offset cell.",
+    "categories":"Filterable project index with direct grid children, 1 column mobile and 4 columns desktop. Each category card has photo crop, category number, short description and visible arrow; cards are flat with 1px borders.",
+    "detail":"Editorial case-study: breadcrumb, project title, category metadata, dominant image, requirement/process/outcome sections, related projects and contact CTA.",
+    "about":"Left-aligned company story with mission, credibility facts including GSTIN, founder/company image treatment if available later, YouTube tutorial strip, and a red contact prompt.",
+    "contact":"Split layout: requirement copy and WhatsApp details on left, form on right using shadcn Input/Textarea/Form. Fields: name, email, phone, project requirement. Show confirmation with Sonner.",
+    "footer":"Darkest solid surface, py-20 or py-32, giant AR ELECTRO wordmark at text-[10vw], links, GSTIN, YouTube and external project list."
+  },
+  "grids": {
+    "marketing":"grid-cols-1 md:grid-cols-8 lg:grid-cols-12 gap-8 lg:gap-12; mix hero, square, tall and filler spans; leave breathing room.",
+    "cards":"grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6; direct children only; align-items:start.",
+    "borders":"Use border-r and border-b selectively to expose a technical skeleton. Do not wrap grid items in unnecessary animation containers.",
+    "container":"max-w-7xl mx-auto px-6 sm:px-8 lg:px-12"
+  },
+  "components": {
+    "component_path":"/app/frontend/src/components/ui/",
+    "use":"Use raw HTML and Tailwind for marketing layout. Use existing shadcn Button, Input, Textarea, Form, Label, Select, DropdownMenu, and Sonner for interactive behavior.",
+    "custom_components":["SiteHeader.jsx","ProjectCard.jsx","CategoryGrid.jsx","ProjectMeta.jsx","ContactForm.jsx","SiteFooter.jsx","GrainOverlay.jsx"],
+    "interaction_rules":"Every button, link, input, menu, project card and key status gets a stable data-testid in kebab-case, e.g. project-category-card-drone, explore-projects-button, contact-form-submit-button. Never use native select for advanced choice; use shadcn Select."
+  },
+  "visual_enhancers": {
+    "texture":"Add a subtle CSS grain/noise overlay at low opacity with pointer-events-none and aria-hidden=true. Keep it decorative, not a gradient.",
+    "rules":"Use 1px red rules as editorial dividers and small coordinate labels such as 01 / 09. Use object-cover image crops with clear subject visibility.",
+    "depth":"Layer flat surfaces with border contrast and restrained ambient shadows; avoid glossy cards and excessive glass.",
+    "scrollbar":"Customize scrollbar thumb using tinted charcoal and red hover; no gutter."
+  },
+  "motion": {
+    "library":"CSS transitions for MVP; optionally Framer Motion and Lenis for marketing polish if already installed.",
+    "entrance":"Stagger project cards with opacity and translate-y; keep under 500ms.",
+    "hover":"Project images scale 1.03, arrow translates 4px, border shifts to #E51A4D, and text remains high contrast. Use transition-transform, transition-colors, transition-opacity only; never transition-all.",
+    "press_focus":"Buttons scale to 0.98 on active and use a visible 2px focus ring in #FF416D.",
+    "reduced_motion":"Wrap nonessential animation in prefers-reduced-motion: reduce and disable parallax/stagger for reduced-motion users."
+  },
+  "media": {
+    "strategy":"Use curated technology/project images now; keep category cards data-driven so later client photos can replace URLs without layout changes. All images require descriptive alt text and loading=lazy except the hero.",
+    "categories":["Diploma Project","Degree Project","Drone Project","Electronics Project","Electrical Project","Embedded Project","Mechanical Project","Biomedical Project","IoT Projects"],
+    "image_urls": {
+      "drone_project":[{"url":"https://images.unsplash.com/photo-1604419623656-8ffddaae66b7?crop=entropy&cs=srgb&fm=jpg&ixlib=rb-4.1.0&q=85","description":"White quadcopter on a dark surface; use for Drone Project hero/card.","category":"Drone Project"},{"url":"https://images.unsplash.com/photo-1570139948508-9142f84fd66e?crop=entropy&cs=srgb&fm=jpg&ixlib=rb-4.1.0&q=85","description":"Hands operating a drone controller; use for drone process detail.","category":"Drone Project"},{"url":"https://images.unsplash.com/photo-1546998256-3529a72762b0?crop=entropy&cs=srgb&fm=jpg&ixlib=rb-4.1.0&q=85","description":"Drone above water and skyline; use for outcome or field-test imagery.","category":"Drone Project"}],
+      "other_categories":"Use the image selector tool for electronics lab, circuit boards, mechanical prototyping, biomedical devices and IoT hardware before implementation. Do not use placeholder URLs or invented image URLs."
+    },
+    "external_links":{"youtube":"https://youtube.com/@arelectroprojects","project_list":"https://www.arelectroprojects.com/","whatsapp":"Use a wa.me link with the business number supplied by the client; do not invent a number."}
+  },
+  "accessibility": {
+    "requirements":["Semantic headings in page order","Keyboard reachable navigation and forms","Visible high-contrast focus states","Alt text for every meaningful image","aria-hidden=true for grain and decorative icons","Labels associated with every form input","Do not rely on color alone for category state","Respect prefers-reduced-motion","Target touch areas at least 44px"],
+    "contrast":"Use warm off-white foreground on #111214 and explicit white text on #E51A4D buttons; check hover/focus states separately."
+  },
+  "3d_libraries": {"decision":"Not needed for MVP; project categories benefit more from crisp 2D imagery and fast browsing than immersion.","optional":"If later adding an interactive drone showcase, use React Three Fiber with Suspense, transparent canvas, adequate lighting and lazy loading."
+  },
+  "content": {
+    "hero":"Engineering projects, made real.",
+    "intro":"We're dedicated to transforming ideas into reality through innovative technology projects. Our mission is to spread knowledge and inspire the next generation of thinkers and creators.",
+    "primary_ctas":["Explore Projects","Contact on WhatsApp"],
+    "credibility":"GSTIN: 24DRWPA8036A1ZX"
+  },
+  "implementation_notes": {
+    "js_only":"All handoff examples and component names use .js/.jsx, not .tsx.",
+    "starter_files":["/app/frontend/tailwind.config.js","/app/frontend/src/index.css","/app/frontend/src/App.css"],
+    "global_rules":["Do not add .App { text-align:center }","Do not use transparent header or content surfaces","Do not use emoji as icons","Do not make every section centered","Use generous spacing p-6 through p-20","Use Sonner for success/error feedback","Keep external links visibly labeled and open safely"],
+    "form_behavior":"Validate required fields client-side, submit to backend API when available, show loading state, success/error toast, and preserve entered values on error. If backend integration is not yet available, isolate a clearly marked MOCKED submit handler and do not imply delivery."
+  },
+  "UNIVERSAL GUIDELINES FOR MAIN AGENT": ["Create distinctive, non-template UI with asymmetry and editorial storytelling.","Use black and #E51A4D as the emotional anchor, with tinted neutrals and no gradients.","Every interactive and key informational element must include data-testid.","Use responsive mobile-first layouts and test desktop navigation visibility.","Use specific transitions, not transition-all; support reduced motion.","Use real curated images only; never placeholder image URLs.","Always ensure content remains readable over imagery with solid or scrim surfaces."]
+}
