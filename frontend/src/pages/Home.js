@@ -70,9 +70,7 @@ function Manifesto() {
   );
 }
 
-function CategoryIndex() {
-  const [cats, setCats] = useState([]);
-  useEffect(() => { api.get('/categories').then((r) => setCats(r.data)).catch(() => {}); }, []);
+function CategoryIndex({ cats }) {
   return (
     <section className="section container" data-testid="category-index">
       <Reveal className="section-head">
@@ -138,13 +136,61 @@ function Transmissions() {
   );
 }
 
+function AllProjects({ cats }) {
+  const [projects, setProjects] = useState([]);
+  const [filter, setFilter] = useState('all');
+  useEffect(() => { api.get('/projects').then((r) => setProjects(r.data)).catch(() => {}); }, []);
+  const catTitle = (slug) => (cats.find((c) => c.slug === slug) || {}).title || slug;
+  const shown = filter === 'all' ? projects : projects.filter((p) => p.category === filter);
+
+  return (
+    <section className="section container" data-testid="all-projects-gallery">
+      <Reveal className="section-head">
+        <div>
+          <p className="eyebrow accent">THE FULL CATALOGUE</p>
+          <h2 className="section-title">EVERY BUILD.<br /><span>EVERY PHOTO.</span></h2>
+        </div>
+        <p className="gallery-count" data-testid="gallery-count">{shown.length} PROJECTS</p>
+      </Reveal>
+      <Reveal className="filter-row">
+        <button className={filter === 'all' ? 'filter-chip active' : 'filter-chip'} onClick={() => setFilter('all')} data-testid="gallery-filter-all">All</button>
+        {cats.map((c) => (
+          <button key={c.slug} className={filter === c.slug ? 'filter-chip active' : 'filter-chip'} onClick={() => setFilter(c.slug)} data-testid={`gallery-filter-${c.slug}`}>
+            {c.title}
+          </button>
+        ))}
+      </Reveal>
+      <div className="gallery-grid">
+        {shown.map((p, i) => (
+          <Reveal key={p.id} delay={(i % 4) * 0.05} className="gallery-card" data-testid={`gallery-card-${i}`}>
+            {p.image ? (
+              <div className="gallery-image clipped"><img src={resolveImage(p.image)} alt={p.title} loading="lazy" /></div>
+            ) : (
+              <div className="gallery-image gallery-fallback clipped"><span>AR</span></div>
+            )}
+            <div className="gallery-copy">
+              <p className="eyebrow">{catTitle(p.category)}</p>
+              <h3>{p.title}</h3>
+              <p>{p.description}</p>
+              {p.price_hint && <span className="price-chip">{p.price_hint}</span>}
+            </div>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
+  const [cats, setCats] = useState([]);
+  useEffect(() => { api.get('/categories').then((r) => setCats(r.data)).catch(() => {}); }, []);
   return (
     <>
       <Hero />
       <Marquee items={['DIPLOMA', 'DEGREE', 'DRONE', 'ELECTRONICS', 'ELECTRICAL', 'EMBEDDED', 'MECHANICAL', 'BIOMEDICAL', 'IOT']} />
       <Manifesto />
-      <CategoryIndex />
+      <CategoryIndex cats={cats} />
+      <AllProjects cats={cats} />
       <Transmissions />
     </>
   );

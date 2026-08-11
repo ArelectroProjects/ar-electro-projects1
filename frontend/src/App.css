@@ -301,6 +301,48 @@ body::after {
 .video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .video-title { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-top: 14px; }
 
+/* ---------- All projects gallery ---------- */
+.gallery-count { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 2px; color: var(--muted); }
+.filter-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 44px; }
+.filter-chip {
+  background: #fff;
+  border: 1px solid var(--line);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+}
+.filter-chip:hover { color: var(--accent); border-color: var(--accent); }
+.filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.gallery-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.gallery-card { background: var(--panel); border: 1px solid var(--line); transition: border-color 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1); height: 100%; }
+.gallery-card:hover { border-color: var(--accent); transform: translateY(-5px); }
+.gallery-image { height: 170px; overflow: hidden; }
+.gallery-image img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+.gallery-card:hover .gallery-image img { transform: scale(1.06); }
+.gallery-fallback {
+  display: grid;
+  place-items: center;
+  background: repeating-linear-gradient(-45deg, var(--panel) 0 14px, #fff 14px 28px);
+}
+.gallery-fallback span {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 26px;
+  color: var(--accent);
+  border: 2px solid var(--accent);
+  padding: 8px 14px;
+  background: #fff;
+}
+.gallery-copy { padding: 20px; }
+.gallery-copy h3 { font-size: 17px; font-weight: 700; margin: 8px 0 8px; line-height: 1.3; }
+.gallery-copy > p { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 0 0 12px; }
+.gallery-copy .price-chip { display: inline-block; padding: 6px 10px; font-size: 11px; }
+
 /* ---------- Inner pages ---------- */
 .page { padding-top: 90px; padding-bottom: 120px; }
 .page-title { font-size: clamp(44px, 7vw, 96px); font-weight: 800; line-height: 0.96; letter-spacing: -2px; margin: 24px 0 26px; text-transform: uppercase; }
@@ -497,6 +539,7 @@ body::after {
   .feature-image { height: 380px; }
   .feature-note { right: 0; }
   .project-grid, .video-grid, .about-grid, .admin-cat-grid { grid-template-columns: repeat(2, 1fr); }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
   .manifesto .chapter { grid-template-columns: 1fr; gap: 14px; }
   .contact { grid-template-columns: 1fr; }
   .admin-form-grid { grid-template-columns: 1fr; }
@@ -519,6 +562,7 @@ body::after {
   }
   .nav.open { display: flex; }
   .project-grid, .video-grid, .about-grid, .admin-cat-grid { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: 1fr; }
   .marquee-item { font-size: 22px; }
   .project-row { flex-wrap: wrap; gap: 16px; }
   .detail-hero { height: 240px; }
