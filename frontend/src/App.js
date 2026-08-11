@@ -50,7 +50,7 @@ export default function App() {
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
-      <Toaster theme="dark" position="bottom-right" />
+      <Toaster theme="light" position="bottom-right" />
     </BrowserRouter>
   );
 }

@@ -5,12 +5,13 @@
 @tailwind utilities;
 
 :root {
-  --ink: #0a0a0b;
-  --panel: #141416;
-  --line: #26262b;
+  --ink: #ffffff;
+  --panel: #f7f4f5;
+  --line: #e9e2e6;
   --accent: #e51a4D;
-  --text: #f4f4f5;
-  --muted: #a1a1aa;
+  --text: #17171a;
+  --muted: #6f6f78;
+  --dark: #0a0a0b;
 }
 
 html { scroll-behavior: auto; }

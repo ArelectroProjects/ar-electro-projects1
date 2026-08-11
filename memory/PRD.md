@@ -19,6 +19,7 @@ Website for "AR ELECTRO Projects" — multi-page site with About Us, project cat
 - Multi-page site, black/#e51a4D theme, category grid, About, Contact form -> MongoDB
 ### 2026-08-11 (phase 2)
 - Award-level redesign: kinetic masked-line hero, parallax spotlight image, editorial marquee, numbered manifesto chapters, clipped frames, grain overlay, Syne/IBM Plex Mono/Manrope type
+- Theme flipped to white background + pink (#e51a4D) accents, black used sparingly (footer band, chips on photos) per client request
 - Admin dashboard (/admin): JWT login, photo upload per category (object storage), project CRUD with price hints, YouTube video management, enquiry inbox
 - Project listings: each category page shows individual builds with title, description, price hint (₹), seeded with 12 starter projects
 - YouTube showcase: 3 real channel videos embedded on home (GSM Gas Leak Detector, Automatic Power Factor Correction, DIY Electric Cycle), admin-editable
