@@ -573,6 +573,25 @@ body::after {
 }
 @media (max-width: 640px) {
   .container { padding: 0 20px; }
+  .hero { padding-top: 40px; padding-bottom: 64px; gap: 44px; }
+  .hero-title { font-size: clamp(38px, 11vw, 52px); letter-spacing: -1px; }
+  .hero-intro { font-size: 15px; }
+  .hero-actions { gap: 20px; }
+  .eyebrow { font-size: 10px; letter-spacing: 2px; }
+  .feature-image { height: 340px; }
+  .feature-note { padding: 14px 18px; top: -18px; }
+  .feature-note span { font-size: 26px; }
+  .section { padding: 72px 20px; }
+  .page { padding-top: 64px; padding-bottom: 80px; }
+  .page-title { font-size: clamp(34px, 10vw, 48px); }
+  .page-intro { font-size: 15px; margin-bottom: 40px; }
+  .manifesto .chapter { padding: 36px 0; }
+  .contact-form { padding: 26px; }
+  .about-panel { padding: 26px; }
+  .footer-top { padding: 64px 0 48px; }
+  .footer-bottom { justify-content: flex-start; gap: 14px; }
+  .detail-hero { height: 220px; margin-bottom: 40px; }
+  .btn { padding: 14px 20px; }
   .menu-btn { display: block; }
   .nav {
     display: none;

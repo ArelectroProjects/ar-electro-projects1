@@ -14,7 +14,8 @@
   --dark: #0a0a0b;
 }
 
-html { scroll-behavior: auto; }
+html { scroll-behavior: auto; overflow-x: hidden; }
+body { overflow-x: hidden; }
 html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 
