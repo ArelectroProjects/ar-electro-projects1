@@ -22,6 +22,7 @@ export default function Footer() {
           <div className="footer-links">
             <a href={YOUTUBE_CHANNEL} target="_blank" rel="noreferrer" data-testid="footer-youtube-link">YouTube</a>
             <a href="https://www.arelectroprojects.com/" target="_blank" rel="noreferrer" data-testid="footer-project-list-link">Project list</a>
+            <Link to="/admin/login" data-testid="footer-admin-link">Admin</Link>
           </div>
         </div>
       </div>
