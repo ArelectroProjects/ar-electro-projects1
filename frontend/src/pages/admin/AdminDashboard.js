@@ -233,6 +233,97 @@ function VideosTab() {
   );
 }
 
+function TwoFASection() {
+  const [enabled, setEnabled] = useState(null);
+  const [setup, setSetup] = useState(null);
+  const [code, setCode] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    api.get('/auth/me').then((r) => setEnabled(!!r.data.totp_enabled)).catch(() => {});
+  }, []);
+
+  const startSetup = async () => {
+    setBusy(true);
+    try {
+      const { data } = await api.post('/auth/2fa/setup');
+      setSetup(data);
+    } catch (err) {
+      toast.error(formatApiError(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const enable = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      await api.post('/auth/2fa/enable', { code });
+      toast.success('Two-factor authentication is ON');
+      setEnabled(true);
+      setSetup(null);
+      setCode('');
+    } catch (err) {
+      toast.error(formatApiError(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const disable = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    try {
+      await api.post('/auth/2fa/disable', { code });
+      toast.success('Two-factor authentication is OFF');
+      setEnabled(false);
+      setCode('');
+    } catch (err) {
+      toast.error(formatApiError(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (enabled === null) return null;
+
+  return (
+    <div className="admin-form clipped twofa-section" data-testid="twofa-section">
+      <div className="twofa-head">
+        <div>
+          <p className="eyebrow">TWO-FACTOR AUTHENTICATION</p>
+          <p className="muted twofa-status" data-testid="twofa-status">
+            {enabled ? 'ON — every login needs your authenticator app code' : 'OFF — protect the studio with a 6-digit app code'}
+          </p>
+        </div>
+        {!enabled && !setup && (
+          <button className="btn btn-primary btn-sm" onClick={startSetup} disabled={busy} data-testid="twofa-setup-button">
+            <span>{busy ? 'Preparing...' : 'Set up 2FA'}</span>
+          </button>
+        )}
+      </div>
+      {setup && !enabled && (
+        <div className="twofa-setup">
+          <p className="muted">1. Scan this QR with Google Authenticator, Authy or any TOTP app.</p>
+          <img src={setup.qr} alt="2FA QR code" className="twofa-qr" data-testid="twofa-qr-image" />
+          <p className="muted">2. Or enter this key manually: <code className="twofa-secret" data-testid="twofa-secret">{setup.secret}</code></p>
+          <form onSubmit={enable} className="twofa-code-form">
+            <label>3. Enter the 6-digit code to finish<input inputMode="numeric" required minLength="6" maxLength="6" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} data-testid="twofa-enable-input" placeholder="000000" /></label>
+            <button className="btn btn-primary btn-sm" disabled={busy || code.length !== 6} data-testid="twofa-enable-submit"><span>{busy ? 'Checking...' : 'Turn on 2FA'}</span></button>
+          </form>
+        </div>
+      )}
+      {enabled && (
+        <form onSubmit={disable} className="twofa-code-form">
+          <label>Enter your current code to turn it off<input inputMode="numeric" required minLength="6" maxLength="6" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} data-testid="twofa-disable-input" placeholder="000000" /></label>
+          <button className="btn btn-outline btn-sm" disabled={busy || code.length !== 6} data-testid="twofa-disable-submit"><span>{busy ? 'Checking...' : 'Turn off 2FA'}</span></button>
+        </form>
+      )}
+    </div>
+  );
+}
+
 function AccountTab() {
   const [current, setCurrent] = useState('');
   const [next, setNext] = useState('');
@@ -257,6 +348,7 @@ function AccountTab() {
         <label>New password<input type="password" required minLength="8" value={next} onChange={(e) => setNext(e.target.value)} data-testid="new-password-input" placeholder="Minimum 8 characters" /></label>
         <button className="btn btn-primary btn-sm" disabled={busy} data-testid="change-password-submit"><span>{busy ? 'Updating...' : 'Update password'}</span></button>
       </form>
+      <TwoFASection />
     </div>
   );
 }

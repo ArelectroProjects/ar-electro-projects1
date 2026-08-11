@@ -359,6 +359,16 @@ body::after {
 .enquire-btn:hover { border-bottom-color: var(--accent); gap: 10px; }
 .row-actions { display: flex; align-items: center; gap: 18px; flex-shrink: 0; }
 .account-form { max-width: 480px; }
+.twofa-section { margin-top: 0; }
+.twofa-head { display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.twofa-status { margin: 10px 0 0; font-size: 14px; }
+.twofa-setup { margin-top: 28px; border-top: 1px solid var(--line); padding-top: 28px; }
+.twofa-setup .muted { font-size: 14px; line-height: 1.6; }
+.twofa-qr { width: 200px; height: 200px; border: 1px solid var(--line); margin: 12px 0; display: block; background: #fff; }
+.twofa-secret { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--accent); background: #fff; border: 1px solid var(--line); padding: 4px 8px; letter-spacing: 1px; }
+.twofa-code-form { margin-top: 20px; max-width: 420px; }
+.twofa-code-form .btn { margin-top: 4px; }
+.auth-note { font-size: 14px; line-height: 1.6; margin: -14px 0 22px; }
 
 /* ---------- Inner pages ---------- */
 .page { padding-top: 90px; padding-bottom: 120px; }

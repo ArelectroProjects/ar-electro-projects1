@@ -11,6 +11,10 @@ from datetime import datetime, timezone, timedelta
 import bcrypt
 import jwt
 import requests
+import pyotp
+import qrcode
+import base64
+from io import BytesIO
 
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
@@ -44,6 +48,25 @@ def create_refresh_token(user_id: str) -> str:
     payload = {"sub": user_id, "exp": datetime.now(timezone.utc) + timedelta(days=7), "type": "refresh"}
     return jwt.encode(payload, get_jwt_secret(), algorithm=JWT_ALGORITHM)
 
+def create_pending_2fa_token(user_id: str) -> str:
+    payload = {"sub": user_id, "exp": datetime.now(timezone.utc) + timedelta(minutes=5), "type": "pending_2fa"}
+    return jwt.encode(payload, get_jwt_secret(), algorithm=JWT_ALGORITHM)
+
+def decode_pending_2fa_token(token: str) -> str:
+    try:
+        payload = jwt.decode(token, get_jwt_secret(), algorithms=[JWT_ALGORITHM])
+        if payload.get("type") != "pending_2fa":
+            raise HTTPException(status_code=401, detail="Invalid token type")
+        return payload["sub"]
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=401, detail="Invalid or expired 2FA session")
+
+def set_auth_cookies(response: Response, user: dict):
+    access = create_access_token(user["id"], user["email"])
+    refresh = create_refresh_token(user["id"])
+    response.set_cookie(key="access_token", value=access, httponly=True, secure=True, samesite="none", max_age=900, path="/")
+    response.set_cookie(key="refresh_token", value=refresh, httponly=True, secure=True, samesite="none", max_age=604800, path="/")
+
 async def get_current_user(request: Request) -> dict:
     token = request.cookies.get("access_token")
     if not token:
@@ -60,7 +83,7 @@ async def get_current_user(request: Request) -> dict:
         raise HTTPException(status_code=401, detail="Token expired")
     except jwt.InvalidTokenError:
         raise HTTPException(status_code=401, detail="Invalid token")
-    user = await db.users.find_one({"id": payload["sub"]}, {"_id": 0, "password_hash": 0})
+    user = await db.users.find_one({"id": payload["sub"]}, {"_id": 0, "password_hash": 0, "totp_secret": 0})
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
     return user
@@ -100,11 +123,61 @@ async def login(input: LoginInput, request: Request, response: Response):
         )
         raise HTTPException(status_code=401, detail="Invalid email or password")
     await db.login_attempts.delete_one({"identifier": identifier})
-    access = create_access_token(user["id"], email)
-    refresh = create_refresh_token(user["id"])
-    response.set_cookie(key="access_token", value=access, httponly=True, secure=True, samesite="none", max_age=900, path="/")
-    response.set_cookie(key="refresh_token", value=refresh, httponly=True, secure=True, samesite="none", max_age=604800, path="/")
+    if user.get("totp_enabled"):
+        return {"requires_2fa": True, "pending_token": create_pending_2fa_token(user["id"])}
+    set_auth_cookies(response, user)
     return {"id": user["id"], "email": email, "name": user.get("name", "Admin"), "role": user.get("role", "admin")}
+
+class TwoFAVerify(BaseModel):
+    pending_token: str
+    code: str = Field(min_length=6, max_length=6)
+
+@api_router.post("/auth/2fa/verify")
+async def verify_2fa_login(input: TwoFAVerify, response: Response):
+    user_id = decode_pending_2fa_token(input.pending_token)
+    user = await db.users.find_one({"id": user_id})
+    if not user or not user.get("totp_enabled") or not user.get("totp_secret"):
+        raise HTTPException(status_code=400, detail="2FA not enabled for this account")
+    if not pyotp.TOTP(user["totp_secret"]).verify(input.code, valid_window=1):
+        raise HTTPException(status_code=401, detail="Invalid authentication code")
+    set_auth_cookies(response, user)
+    return {"id": user["id"], "email": user["email"], "name": user.get("name", "Admin"), "role": user.get("role", "admin")}
+
+@api_router.post("/auth/2fa/setup")
+async def setup_2fa(request: Request):
+    user = await get_current_user(request)
+    secret = pyotp.random_base32()
+    await db.users.update_one({"id": user["id"]}, {"$set": {"totp_secret": secret, "totp_enabled": False}})
+    uri = pyotp.totp.TOTP(secret).provisioning_uri(name=user["email"], issuer_name="AR ELECTRO Projects")
+    buf = BytesIO()
+    qrcode.make(uri).save(buf, format="PNG")
+    qr_data_url = "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode()
+    return {"secret": secret, "qr": qr_data_url}
+
+class TwoFACode(BaseModel):
+    code: str = Field(min_length=6, max_length=6)
+
+@api_router.post("/auth/2fa/enable")
+async def enable_2fa(input: TwoFACode, request: Request):
+    user = await get_current_user(request)
+    full = await db.users.find_one({"id": user["id"]})
+    if not full.get("totp_secret"):
+        raise HTTPException(status_code=400, detail="Run 2FA setup first")
+    if not pyotp.TOTP(full["totp_secret"]).verify(input.code, valid_window=1):
+        raise HTTPException(status_code=400, detail="Invalid code — check your authenticator app")
+    await db.users.update_one({"id": user["id"]}, {"$set": {"totp_enabled": True}})
+    return {"status": "2fa enabled"}
+
+@api_router.post("/auth/2fa/disable")
+async def disable_2fa(input: TwoFACode, request: Request):
+    user = await get_current_user(request)
+    full = await db.users.find_one({"id": user["id"]})
+    if not full.get("totp_enabled"):
+        return {"status": "2fa already disabled"}
+    if not pyotp.TOTP(full["totp_secret"]).verify(input.code, valid_window=1):
+        raise HTTPException(status_code=400, detail="Invalid code — check your authenticator app")
+    await db.users.update_one({"id": user["id"]}, {"$set": {"totp_enabled": False}})
+    return {"status": "2fa disabled"}
 
 @api_router.post("/auth/logout")
 async def logout(response: Response):

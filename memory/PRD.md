@@ -26,6 +26,7 @@ Website for "AR ELECTRO Projects" — multi-page site with About Us, project cat
 - Gap fill: all 84 projects now have price hints; 77 have real photos (thematically matched client catalogue imagery); 7 keep AR tiles (fill_gaps.py)
 - Per-project WhatsApp enquiry buttons (prefilled project name) on gallery cards and category listing rows
 - Admin Account tab: self-serve password change (POST /api/auth/change-password); startup seed no longer overwrites a changed password
+- Two-factor authentication (TOTP): QR setup in Account tab, 6-digit code step at login when enabled, pending-token flow; verified enable→login→verify→disable cycle; OFF by default
 - Admin dashboard (/admin): JWT login, photo upload per category (object storage), project CRUD with price hints, YouTube video management, enquiry inbox
 - Project listings: each category page shows individual builds with title, description, price hint (₹), seeded with 12 starter projects
 - YouTube showcase: 3 real channel videos embedded on home (GSM Gas Leak Detector, Automatic Power Factor Correction, DIY Electric Cycle), admin-editable
