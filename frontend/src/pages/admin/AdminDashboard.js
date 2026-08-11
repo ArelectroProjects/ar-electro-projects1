@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { LogOut, Trash2, Upload, Plus } from 'lucide-react';
+import { LogOut, Trash2, Upload, Plus, Pencil, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { api, resolveImage, extractVideoId, formatApiError } from '../../lib/api';
 
@@ -60,6 +60,7 @@ function ProjectsTab() {
   const [projects, setProjects] = useState([]);
   const [form, setForm] = useState({ category: 'diploma-project', title: '', description: '', price_hint: '', image: '' });
   const [busy, setBusy] = useState(false);
+  const [editingId, setEditingId] = useState(null);
 
   const load = useCallback(() => {
     api.get('/categories').then((r) => setCats(r.data)).catch(() => {});
@@ -67,19 +68,35 @@ function ProjectsTab() {
   }, []);
   useEffect(() => { load(); }, [load]);
 
-  const add = async (e) => {
+  const resetForm = () => {
+    setForm({ category: 'diploma-project', title: '', description: '', price_hint: '', image: '' });
+    setEditingId(null);
+  };
+
+  const save = async (e) => {
     e.preventDefault();
     setBusy(true);
     try {
-      await api.post('/admin/projects', form);
-      toast.success('Project added');
-      setForm({ ...form, title: '', description: '', price_hint: '', image: '' });
+      if (editingId) {
+        await api.put(`/admin/projects/${editingId}`, form);
+        toast.success('Project updated');
+      } else {
+        await api.post('/admin/projects', form);
+        toast.success('Project added');
+      }
+      resetForm();
       load();
     } catch (err) {
       toast.error(formatApiError(err));
     } finally {
       setBusy(false);
     }
+  };
+
+  const startEdit = (p) => {
+    setEditingId(p.id);
+    setForm({ category: p.category, title: p.title, description: p.description, price_hint: p.price_hint || '', image: p.image || '' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const remove = async (id) => {
@@ -94,7 +111,13 @@ function ProjectsTab() {
 
   return (
     <div data-testid="admin-projects-tab">
-      <form className="admin-form clipped" onSubmit={add}>
+      <form className="admin-form clipped" onSubmit={save}>
+        {editingId && (
+          <div className="edit-banner" data-testid="edit-mode-banner">
+            <span>Editing project — changes save over the existing listing</span>
+            <button type="button" className="icon-btn" onClick={resetForm} data-testid="cancel-edit-button" aria-label="Cancel edit"><XCircle size={16} /></button>
+          </div>
+        )}
         <div className="admin-form-grid">
           <label>Category
             <select value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} data-testid="project-category-select">
@@ -108,7 +131,7 @@ function ProjectsTab() {
         <div className="admin-form-actions">
           <ImageUpload testId="project-image-upload-button" onUploaded={(path) => setForm({ ...form, image: path })} />
           {form.image && <img className="admin-preview clipped" src={resolveImage(form.image)} alt="project" data-testid="project-image-preview" />}
-          <button className="btn btn-primary btn-sm" disabled={busy} data-testid="project-add-submit"><Plus size={15} /> <span>{busy ? 'Adding...' : 'Add project'}</span></button>
+          <button className="btn btn-primary btn-sm" disabled={busy} data-testid="project-add-submit"><Plus size={15} /> <span>{busy ? 'Saving...' : editingId ? 'Update project' : 'Add project'}</span></button>
         </div>
       </form>
       {projects.map((p, i) => (
@@ -118,6 +141,7 @@ function ProjectsTab() {
             <b>{p.title}</b>
             <p className="muted">{p.category} {p.price_hint ? `· ${p.price_hint}` : ''}</p>
           </div>
+          <button className="icon-btn" onClick={() => startEdit(p)} data-testid={`project-edit-${i}`} aria-label="Edit project"><Pencil size={16} /></button>
           <button className="icon-btn" onClick={() => remove(p.id)} data-testid={`project-delete-${i}`} aria-label="Delete project"><Trash2 size={16} /></button>
         </div>
       ))}
