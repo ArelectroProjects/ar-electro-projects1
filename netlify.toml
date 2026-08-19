@@ -3,5 +3,7 @@
   publish = "frontend/build"
   base = "frontend"
 
-[build.environment]
+  [build.environment]
   NODE_VERSION = "20"
+  REACT_APP_BACKEND_URL = "https://ar-electro-projects1-3.onrender.com"
+  
