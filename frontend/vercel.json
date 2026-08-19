@@ -1,6 +1,1 @@
-{
-  "buildCommand": "npx craco build",
-  "installCommand": "npm install --legacy-peer-deps ajv@6.12.6",
-  "outputDirectory": "build",
-  "framework": "other"
-}
+
