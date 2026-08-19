@@ -1,8 +1,9 @@
 [build]
-  command = "npm run build"
-  publish = "frontend/build"
-  base = "frontend"
 
+  command = "npm run build"
+  publish = "build"
+  base = "frontend"
+  
   [build.environment]
   NODE_VERSION = "20"
   REACT_APP_BACKEND_URL = "https://ar-electro-projects1-3.onrender.com"
